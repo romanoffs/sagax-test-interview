@@ -1,0 +1,26 @@
+package com.sagax.shop.util;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+public class PriceUtils {
+
+    // CASE 6: BigDecimal.equals() checks scale, so
+    // new BigDecimal("10.0").equals(new BigDecimal("10.00")) returns FALSE.
+    // This method silently fails for "equal" prices with different scales.
+    public static boolean arePricesEqual(BigDecimal price1, BigDecimal price2) {
+        if (price1 == null || price2 == null) {
+            return price1 == price2;
+        }
+        return price1.equals(price2); // BUG: should use compareTo() == 0
+    }
+
+    public static BigDecimal applyDiscount(BigDecimal price, BigDecimal discountPercent) {
+        BigDecimal discount = price.multiply(discountPercent).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        return price.subtract(discount);
+    }
+
+    public static BigDecimal calculateTotal(BigDecimal unitPrice, int quantity) {
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
+    }
+}
