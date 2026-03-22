@@ -22,9 +22,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-// CASE 16: God class / SRP violation.
-// This service handles: order creation, payment processing, inventory updates,
-// email notifications, PDF receipt generation, and report queries — all in one class.
 @Service
 @Slf4j
 public class OrderService {
@@ -35,8 +32,6 @@ public class OrderService {
     private final PaymentService paymentService;
     private final NotificationService notificationService;
 
-    // CASE 12: Circular dependency — OrderService → PaymentService → OrderService
-    // PaymentService uses @Lazy to break the cycle, which is itself a code smell.
     public OrderService(OrderRepository orderRepository,
                         UserRepository userRepository,
                         ProductService productService,
@@ -80,28 +75,18 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        // CASE 7: Self-invocation — calling internal method annotated with @Transactional(REQUIRES_NEW).
-        // Because this is a direct method call (this.processPaymentInternal()),
-        // the proxy is bypassed and REQUIRES_NEW has no effect.
         processPaymentInternal(savedOrder);
 
-        // CASE 34: DIP violation — creating dependency directly instead of injection
         sendReceiptEmail(savedOrder, user);
 
         return savedOrder;
     }
 
-    // CASE 7: This annotation has NO EFFECT because it's called internally (self-invocation).
-    // The Spring proxy is bypassed, so REQUIRES_NEW never creates a new transaction.
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processPaymentInternal(Order order) {
         log.info("Processing payment for order: {}", order.getId());
-        // Payment processing logic that should run in its own transaction
-        // but actually runs in the caller's transaction due to self-invocation
     }
 
-    // CASE 9: @Transactional on a private method — Spring AOP proxy cannot intercept private methods.
-    // This annotation is completely ignored.
     @Transactional
     private void updateInventory(Order order) {
         for (OrderItem item : order.getItems()) {
@@ -109,16 +94,10 @@ public class OrderService {
         }
     }
 
-    // CASE 34: Dependency Inversion Principle violation — creating EmailSender directly
-    // instead of depending on an injected abstraction. Untestable, tightly coupled.
     private void sendReceiptEmail(Order order, User user) {
-        // Direct instantiation instead of DI
-        // In a real app, this would be: new EmailSender() or similar
         try {
-            // Simulating direct file-based "email" sending — tightly coupled to file system
             String receipt = generateReceipt(order);
             log.info("Sending receipt email to: {}", user.getEmail());
-            // Simulate writing receipt to file (tight coupling)
             try (FileWriter writer = new FileWriter("/tmp/receipt_" + order.getId() + ".txt")) {
                 writer.write(receipt);
             }
@@ -127,7 +106,6 @@ public class OrderService {
         }
     }
 
-    // Part of CASE 16: PDF receipt generation shouldn't be in OrderService
     private String generateReceipt(Order order) {
         StringBuilder sb = new StringBuilder();
         sb.append("Order Receipt #").append(order.getId()).append("\n");
@@ -156,13 +134,11 @@ public class OrderService {
         return orderRepository.findByUserId(userId);
     }
 
-    // CASE 26 (related): called from PUT endpoint that has side effects
     @Transactional
     public Order updateOrderStatus(Long orderId, OrderStatus status) {
         Order order = getOrderById(orderId);
         order.setStatus(status);
 
-        // Side effect: logging to external system on every call makes PUT non-idempotent
         log.info("Order {} status changed to {} — sending notification", orderId, status);
         notificationService.sendEmail(
                 order.getUser().getEmail(),
@@ -186,12 +162,10 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
-    // Part of CASE 16: Report query logic shouldn't be in OrderService
     public List<Order> getOrdersByStatus(OrderStatus status) {
         return orderRepository.findByStatus(status);
     }
 
-    // Part of CASE 16: Yet another responsibility in the God class
     public BigDecimal calculateTotalRevenue() {
         return orderRepository.findAll().stream()
                 .map(Order::getTotalAmount)

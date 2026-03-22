@@ -17,8 +17,6 @@ public class ProductDto {
 
     private String sku;
 
-    // CASE 36: These validation annotations exist, but @Valid is missing
-    // on the controller parameter — so they are never triggered.
     @NotNull(message = "Price is required")
     @Min(value = 0, message = "Price must be non-negative")
     private BigDecimal price;

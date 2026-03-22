@@ -18,8 +18,6 @@ public class CategoryController {
 
     private final CategoryRepository categoryRepository;
 
-    // CASE 19 (triggered here): Category has EAGER-loaded products.
-    // Loading all categories also loads ALL products for each — massive query.
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
         return ResponseEntity.ok(categoryRepository.findAll());

@@ -7,9 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-// CASE 11: @Component instead of @Repository.
-// JPA-specific exceptions will NOT be translated to Spring's DataAccessException hierarchy.
-// Should be @Repository for proper exception translation.
 @Component
 public class ProductSearchHelper {
 

@@ -26,13 +26,10 @@ public class User {
 
     private String lastName;
 
-    // CASE 27 (related): Plain text password stored — should be hashed
     private String password;
 
     private String role;
 
-    // CASE 18: Lazy-loaded collection — will throw LazyInitializationException
-    // if accessed outside transactional context
     @OneToMany(mappedBy = "user")
     @JsonIgnoreProperties("user")
     private List<Order> orders = new ArrayList<>();

@@ -21,8 +21,6 @@ public class PaymentController {
             Payment payment = paymentService.processPayment(paymentDto);
             return ResponseEntity.ok(payment);
         } catch (PaymentException e) {
-            // CASE 28 (related): Inconsistent error handling — returns plain string
-            // instead of structured error response like GlobalExceptionHandler does.
             return ResponseEntity.badRequest().build();
         }
     }

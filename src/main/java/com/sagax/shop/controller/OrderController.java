@@ -20,9 +20,6 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    // CASE 17: N+1 problem — fetches all orders, then for EACH order
-    // iterates order.getItems() triggering a separate SELECT per order.
-    // No JOIN FETCH or @EntityGraph is used.
     @GetMapping
     public ResponseEntity<List<OrderDto>> getAllOrders() {
         List<Order> orders = orderService.getAllOrders();
@@ -31,17 +28,16 @@ public class OrderController {
         for (Order order : orders) {
             OrderDto dto = new OrderDto();
             dto.setId(order.getId());
-            dto.setUserId(order.getUser().getId()); // additional SELECT for user
+            dto.setUserId(order.getUser().getId());
             dto.setStatus(order.getStatus().name());
             dto.setTotalAmount(order.getTotalAmount());
             dto.setCreatedAt(order.getCreatedAt());
 
-            // N+1: each order.getItems() triggers a separate query
             List<OrderDto.OrderItemDto> itemDtos = new ArrayList<>();
             for (OrderItem item : order.getItems()) {
                 OrderDto.OrderItemDto itemDto = new OrderDto.OrderItemDto();
                 itemDto.setProductId(item.getProduct().getId());
-                itemDto.setProductName(item.getProduct().getName()); // yet another SELECT
+                itemDto.setProductName(item.getProduct().getName());
                 itemDto.setQuantity(item.getQuantity());
                 itemDto.setPrice(item.getPriceAtPurchase());
                 itemDtos.add(itemDto);
@@ -55,7 +51,6 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        // CASE 28: OrderNotFoundException NOT handled in GlobalExceptionHandler — returns 500
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
@@ -64,10 +59,6 @@ public class OrderController {
         return ResponseEntity.ok(orderService.createOrder(request));
     }
 
-    // CASE 26: Non-idempotent PUT.
-    // PUT should be idempotent, but updateOrderStatus() sends a notification email
-    // on EVERY call. Calling PUT twice sends two emails.
-    // Also: using PUT for partial update (only status), where PATCH is more appropriate.
     @PutMapping("/{id}/status")
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id,
                                                    @RequestParam OrderStatus status) {

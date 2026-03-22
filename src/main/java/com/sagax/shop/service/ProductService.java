@@ -26,12 +26,10 @@ public class ProductService {
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
-    // CASE 5: toList() returns an unmodifiable list.
-    // If a caller tries to sort() or add() to the result, it will throw UnsupportedOperationException.
     public List<Product> getActiveProducts() {
         return productRepository.findAll().stream()
                 .filter(p -> p.getStockQuantity() > 0)
-                .toList(); // Returns unmodifiable list!
+                .toList();
     }
 
     public List<Product> getAllProducts() {
@@ -65,10 +63,6 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    // CASE 37: Race condition — non-atomic read-modify-write.
-    // Two concurrent threads can both read stock=10, both set stock=9 instead of 8.
-    // CASE 20: The Product entity HAS @Version, but this read-modify-write pattern
-    // may still cause lost updates under high concurrency without proper retry logic.
     @Transactional
     public void purchaseProduct(Long productId, int quantity) {
         Product product = productRepository.findById(productId)
@@ -78,8 +72,6 @@ public class ProductService {
             throw new InsufficientStockException(productId, quantity, product.getStockQuantity());
         }
 
-        // TOCTOU: between the check above and the save below,
-        // another thread can modify stock
         product.setStockQuantity(product.getStockQuantity() - quantity);
         productRepository.save(product);
     }

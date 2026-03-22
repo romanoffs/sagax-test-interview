@@ -28,15 +28,10 @@ public class Order {
     @JsonIgnoreProperties({"orders", "addresses", "password"})
     private User user;
 
-    // CASE 23: Missing orphanRemoval = true.
-    // Removing an item from this list (order.getItems().remove(item))
-    // will NOT delete the orphan OrderItem from the database.
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("order")
     private List<OrderItem> items = new ArrayList<>();
 
-    // CASE 22: EnumType.ORDINAL — if enum constants are reordered or a new one
-    // is inserted in the middle, all existing DB data is silently corrupted.
     @Enumerated(EnumType.ORDINAL)
     private OrderStatus status;
 

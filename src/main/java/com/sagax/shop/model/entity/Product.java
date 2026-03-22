@@ -30,7 +30,6 @@ public class Product {
 
     private String description;
 
-    // CASE 19 (related): EAGER on ManyToOne is the JPA default, but worth discussing
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     @JsonIgnoreProperties("products")
@@ -42,13 +41,6 @@ public class Product {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // CASE 1: Broken equals/hashCode contract.
-    // equals() uses id + name + price, but hashCode() uses only id.
-    // For new (unsaved) entities, id is null — all go to the same bucket in HashMap.
-    // Two Products with same id but different name/price: equal hashCode, but equals returns false — OK.
-    // Two Products with different id but same name+price: different hashCode, equals returns false — OK.
-    // BUT: two NEW (unsaved) products with same name+price — hashCode is same (null),
-    // equals is true — they are "equal" which may not be intended.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

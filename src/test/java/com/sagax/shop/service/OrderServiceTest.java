@@ -15,17 +15,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-// CASE 30: @MockBean in integration test.
-// This is a @SpringBootTest (integration test), but it mocks the repository,
-// defeating the purpose of integration testing. The real DB is never hit.
-// Should either be a unit test (no @SpringBootTest) or use real repository.
 @SpringBootTest
 class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
 
-    // CASE 30: Mocking repository in an integration test — should be real
     @MockitoBean
     private OrderRepository orderRepository;
 
@@ -47,6 +42,5 @@ class OrderServiceTest {
         List<Order> result = orderService.getOrdersByStatus(OrderStatus.PENDING);
 
         assertEquals(2, result.size());
-        // This test passes but proves nothing about the real query
     }
 }

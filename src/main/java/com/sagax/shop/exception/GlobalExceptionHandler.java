@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-// CASE 28: Inconsistent error handling.
-// Handles ProductNotFoundException but NOT OrderNotFoundException.
-// Returns different error formats (Map here vs plain string in controllers).
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -31,7 +28,4 @@ public class GlobalExceptionHandler {
                 "status", 400
         ));
     }
-
-    // NOTE: OrderNotFoundException is NOT handled here — will result in 500 Internal Server Error.
-    // PaymentException is also NOT handled here.
 }

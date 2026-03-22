@@ -1,9 +1,8 @@
-# CASE 13: Production config with dev settings leaked
 spring:
   jpa:
-    show-sql: true            # Should be false in production
+    show-sql: true
     hibernate:
-      ddl-auto: update        # Extremely dangerous in production — should be 'validate' or 'none'
+      ddl-auto: update
   h2:
     console:
-      enabled: true           # Security vulnerability — H2 console open in production
+      enabled: true

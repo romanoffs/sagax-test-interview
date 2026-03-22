@@ -5,14 +5,11 @@ import java.math.RoundingMode;
 
 public class PriceUtils {
 
-    // CASE 6: BigDecimal.equals() checks scale, so
-    // new BigDecimal("10.0").equals(new BigDecimal("10.00")) returns FALSE.
-    // This method silently fails for "equal" prices with different scales.
     public static boolean arePricesEqual(BigDecimal price1, BigDecimal price2) {
         if (price1 == null || price2 == null) {
             return price1 == price2;
         }
-        return price1.equals(price2); // BUG: should use compareTo() == 0
+        return price1.equals(price2);
     }
 
     public static BigDecimal applyDiscount(BigDecimal price, BigDecimal discountPercent) {

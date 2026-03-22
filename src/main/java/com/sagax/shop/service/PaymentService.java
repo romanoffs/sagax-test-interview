@@ -19,29 +19,20 @@ import java.util.UUID;
 @Slf4j
 public class PaymentService {
 
-    // CASE 15: Field injection instead of constructor injection.
-    // Makes testing harder, hides dependencies, allows invalid object state.
     @Autowired
     private PaymentRepository paymentRepository;
 
     @Autowired
     private OrderRepository orderRepository;
 
-    // CASE 12: Circular dependency — OrderService depends on PaymentService,
-    // PaymentService depends on OrderService (via @Lazy workaround)
     @Autowired
     @org.springframework.context.annotation.Lazy
     private OrderService orderService;
 
-    // CASE 8: @Transactional does NOT rollback on checked exceptions by default.
-    // PaymentException extends Exception (checked), so even if it's thrown,
-    // the transaction will COMMIT, leaving inconsistent data.
-    // Fix: @Transactional(rollbackFor = PaymentException.class)
     @Transactional
     public Payment processPayment(PaymentDto paymentDto) throws PaymentException {
         log.info("Processing payment for order: {}", paymentDto.getOrderId());
 
-        // CASE 35: Sensitive data in logs — leaking card number and PII
         log.info("Payment details — card: {}, amount: {}",
                 paymentDto.getCardNumber(), paymentDto.getAmount());
 
@@ -54,17 +45,15 @@ public class PaymentService {
         payment.setTransactionId(UUID.randomUUID().toString());
         payment.setProcessedAt(LocalDateTime.now());
 
-        // Simulate payment processing
         if (paymentDto.getCardNumber() == null || paymentDto.getCardNumber().length() < 13) {
             payment.setStatus(PaymentStatus.FAILED);
             paymentRepository.save(payment);
-            throw new PaymentException("Invalid card number"); // checked exception — no rollback!
+            throw new PaymentException("Invalid card number");
         }
 
         payment.setStatus(PaymentStatus.COMPLETED);
         paymentRepository.save(payment);
 
-        // Update order status via OrderService
         orderService.markOrderPaid(order.getId());
 
         return payment;

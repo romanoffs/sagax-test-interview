@@ -18,9 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-// CASE 31: Testing implementation details instead of behavior.
-// Tests verify HOW the service works (exact method calls) rather than WHAT it does.
-// Refactoring the service internals will break these tests even if behavior is unchanged.
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
@@ -49,9 +46,6 @@ class ProductServiceTest {
 
         Product result = productService.createProduct(dto);
 
-        // CASE 31: Testing implementation details — verifying exact call count
-        // If the service is refactored to use saveAndFlush() instead of save(),
-        // this test breaks even though the behavior is the same.
         verify(productRepository, times(1)).save(any(Product.class));
         verify(categoryRepository, never()).findById(any());
 
@@ -68,7 +62,6 @@ class ProductServiceTest {
 
         Product result = productService.getProductById(1L);
 
-        // CASE 31: Testing implementation — verifying findById was called with exact argument
         verify(productRepository).findById(1L);
         assertNotNull(result);
     }

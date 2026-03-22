@@ -21,8 +21,6 @@ public class Category {
 
     private String name;
 
-    // CASE 19: EAGER loading on a collection — performance bomb.
-    // Loading all categories will load ALL products for EVERY category (Cartesian product).
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("category")
     private List<Product> products = new ArrayList<>();

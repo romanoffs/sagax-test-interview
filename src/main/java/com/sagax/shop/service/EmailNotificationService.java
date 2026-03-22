@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-// CASE 10: Prototype scope — but when injected into a Singleton (OrderService)
-// via constructor injection, it's created only ONCE, defeating the purpose.
 @Service
 @Scope("prototype")
 @Slf4j
@@ -19,7 +17,6 @@ public class EmailNotificationService implements NotificationService {
         log.info("Sending email to: {}, subject: {}, total sent: {}", to, subject, emailsSentCount);
     }
 
-    // CASE 33: ISP violation — these methods throw UnsupportedOperationException
     @Override
     public void sendSms(String phoneNumber, String message) {
         throw new UnsupportedOperationException("SMS not supported by EmailNotificationService");
