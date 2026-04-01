@@ -5,7 +5,6 @@ import com.sagax.shop.model.entity.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import solutions.ProductUtilsSolution;
 
 import java.math.BigDecimal;
 import java.util.NoSuchElementException;
@@ -18,13 +17,13 @@ class ProductUtilsTest {
 
     @Test
     void optionalOfProduct_nullReturnsEmpty() {
-        assertTrue(ProductUtilsSolution.optionalOfProduct(null).isEmpty());
+        assertTrue(ProductUtils.optionalOfProduct(null).isEmpty());
     }
 
     @Test
     void optionalOfProduct_nonNullReturnsPresent() {
         Product product = productWithPrice("49.99");
-        Optional<Product> result = ProductUtilsSolution.optionalOfProduct(product);
+        Optional<Product> result = ProductUtils.optionalOfProduct(product);
         assertTrue(result.isPresent());
         assertSame(product, result.get());
     }
@@ -33,40 +32,40 @@ class ProductUtilsTest {
     @ValueSource(strings = {"Electronics", "Books", "Clothing", "Sports"})
     void getCategoryName_returnsCategoryNameWhenPresent(String categoryName) {
         Product product = productWithCategory(categoryName);
-        assertEquals(categoryName, ProductUtilsSolution.getCategoryName(product));
+        assertEquals(categoryName, ProductUtils.getCategoryName(product));
     }
 
     @Test
     void getCategoryName_returnsUncategorizedWhenCategoryIsNull() {
         Product product = productWithPrice("10.00");
-        assertEquals("Uncategorized", ProductUtilsSolution.getCategoryName(product));
+        assertEquals("Uncategorized", ProductUtils.getCategoryName(product));
     }
 
     @Test
     void getProductOrDefault_returnsDefaultWhenSupplierIsEmpty() {
         Product defaultProduct = productWithPrice("0.00");
-        Product result = ProductUtilsSolution.getProductOrDefault(Optional::empty, defaultProduct);
+        Product result = ProductUtils.getProductOrDefault(Optional::empty, defaultProduct);
         assertSame(defaultProduct, result);
     }
 
     @Test
     void getProductOrDefault_returnsProvidedProductWhenPresent() {
         Product provided = productWithPrice("99.99");
-        Product result = ProductUtilsSolution.getProductOrDefault(() -> Optional.of(provided), productWithPrice("0.00"));
+        Product result = ProductUtils.getProductOrDefault(() -> Optional.of(provided), productWithPrice("0.00"));
         assertSame(provided, result);
     }
 
     @Test
     void filterInStock_returnsProductWhenInStock() {
         Product product = productWithStock(5);
-        assertTrue(ProductUtilsSolution.filterInStock(() -> Optional.of(product)).isPresent());
+        assertTrue(ProductUtils.filterInStock(() -> Optional.of(product)).isPresent());
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, -1, -100})
     void filterInStock_returnsEmptyWhenOutOfStock(int stock) {
         Product product = productWithStock(stock);
-        assertTrue(ProductUtilsSolution.filterInStock(() -> Optional.of(product)).isEmpty());
+        assertTrue(ProductUtils.filterInStock(() -> Optional.of(product)).isEmpty());
     }
 
     @Test
@@ -74,7 +73,7 @@ class ProductUtilsTest {
         AtomicBoolean processed = new AtomicBoolean(false);
         Product product = productWithPrice("25.00");
 
-        ProductUtilsSolution.processProduct(
+        ProductUtils.processProduct(
                 () -> Optional.of(product),
                 p -> processed.set(true),
                 () -> fail("onEmpty should not be called")
@@ -87,7 +86,7 @@ class ProductUtilsTest {
     void processProduct_callsOnEmptyWhenNoProduct() {
         AtomicBoolean noProductCalled = new AtomicBoolean(false);
 
-        ProductUtilsSolution.processProduct(
+        ProductUtils.processProduct(
                 Optional::empty,
                 p -> fail("onPresent should not be called"),
                 () -> noProductCalled.set(true)
@@ -100,34 +99,34 @@ class ProductUtilsTest {
     void getProductPrice_returnsPriceWhenProductPresent() {
         BigDecimal price = new BigDecimal("149.99");
         Product product = productWithPrice(price.toPlainString());
-        Optional<BigDecimal> result = ProductUtilsSolution.getProductPrice(() -> Optional.of(product));
+        Optional<BigDecimal> result = ProductUtils.getProductPrice(() -> Optional.of(product));
         assertTrue(result.isPresent());
         assertEquals(price, result.get());
     }
 
     @Test
     void getProductPrice_returnsEmptyWhenSupplierIsEmpty() {
-        assertTrue(ProductUtilsSolution.getProductPrice(Optional::empty).isEmpty());
+        assertTrue(ProductUtils.getProductPrice(Optional::empty).isEmpty());
     }
 
     @Test
     void getProductWithFallback_returnsFallbackWhenMainSupplierIsEmpty() {
         Product fallback = productWithPrice("5.00");
-        Product result = ProductUtilsSolution.getProductWithFallback(Optional::empty, () -> Optional.of(fallback));
+        Product result = ProductUtils.getProductWithFallback(Optional::empty, () -> Optional.of(fallback));
         assertSame(fallback, result);
     }
 
     @Test
     void getProductWithFallback_throwsWhenBothSuppliersAreEmpty() {
         assertThrows(NoSuchElementException.class,
-                () -> ProductUtilsSolution.getProductWithFallback(Optional::empty, Optional::empty));
+                () -> ProductUtils.getProductWithFallback(Optional::empty, Optional::empty));
     }
 
     @Test
     void getOrGenerateSku_returnsExistingSkuWithoutGenerating() {
         Product product = productWithPrice("30.00");
         product.setSku("EXISTING-0001");
-        String sku = ProductUtilsSolution.getOrGenerateSku(() -> Optional.of(product));
+        String sku = ProductUtils.getOrGenerateSku(() -> Optional.of(product));
         assertEquals("EXISTING-0001", sku);
     }
 
@@ -135,7 +134,7 @@ class ProductUtilsTest {
     void getOrGenerateSku_generatesSkuWithCategoryPrefixWhenSkuIsAbsent() {
         Product product = productWithCategory("Electronics");
         product.setSku(null);
-        String sku = ProductUtilsSolution.getOrGenerateSku(() -> Optional.of(product));
+        String sku = ProductUtils.getOrGenerateSku(() -> Optional.of(product));
         assertTrue(sku.startsWith("Electronics-"), "Generated SKU should start with category prefix");
     }
 
@@ -143,7 +142,7 @@ class ProductUtilsTest {
     void getOrGenerateSku_usesFallbackPrefixWhenCategoryIsNull() {
         Product product = productWithPrice("15.00");
         product.setSku(null);
-        String sku = ProductUtilsSolution.getOrGenerateSku(() -> Optional.of(product));
+        String sku = ProductUtils.getOrGenerateSku(() -> Optional.of(product));
         assertTrue(sku.startsWith("GEN-"), "Generated SKU should start with GEN when no category");
     }
 
