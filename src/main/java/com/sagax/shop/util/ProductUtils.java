@@ -24,7 +24,7 @@ public class ProductUtils {
      * @param product nullable product
      * @return Optional containing the product, or empty if null
      */
-    // CASE 44: Optional Creation: ofNullable vs of
+    // CASE 44
     public static Optional<Product> optionalOfProduct(Product product) {
         throw new ExerciseNotCompletedException();
     }
@@ -36,7 +36,7 @@ public class ProductUtils {
      * @param product the product to inspect (never null itself)
      * @return category name or "Uncategorized"
      */
-    // CASE 45: Optional mapping chain
+    // CASE 45
     public static String getCategoryName(Product product) {
         throw new ExerciseNotCompletedException();
     }
@@ -49,7 +49,7 @@ public class ProductUtils {
      * @param defaultProduct  fallback value
      * @return provided or default product
      */
-    // CASE 46: Optional orElse fallback
+    // CASE 46
     public static Product getProductOrDefault(Supplier<Optional<Product>> productSupplier, Product defaultProduct) {
         throw new ExerciseNotCompletedException();
     }
@@ -61,7 +61,7 @@ public class ProductUtils {
      * @param productSupplier source of an optional product
      * @return Optional with in-stock product, or empty
      */
-    // CASE 47: Optional filter
+    // CASE 47
     public static Optional<Product> filterInStock(Supplier<Optional<Product>> productSupplier) {
         throw new ExerciseNotCompletedException();
     }
@@ -74,7 +74,7 @@ public class ProductUtils {
      * @param onPresent       consumer invoked with the product when present
      * @param onEmpty         action invoked when no product is provided
      */
-    // CASE 48: Optional ifPresentOrElse
+    // CASE 48
     public static void processProduct(Supplier<Optional<Product>> productSupplier,
                                       Consumer<Product> onPresent,
                                       Runnable onEmpty) {
@@ -87,7 +87,7 @@ public class ProductUtils {
      * @param productSupplier source of an optional product
      * @return Optional containing the price, or empty if no product is provided
      */
-    // CASE 49: Optional safely mapping a property
+    // CASE 49
     public static Optional<BigDecimal> getProductPrice(Supplier<Optional<Product>> productSupplier) {
         throw new ExerciseNotCompletedException();
     }
@@ -102,7 +102,7 @@ public class ProductUtils {
      * @return product from either supplier
      * @throws NoSuchElementException if both suppliers are empty
      */
-    // CASE 50: Optional or() / orElseThrow
+    // CASE 50
     public static Product getProductWithFallback(Supplier<Optional<Product>> productSupplier,
                                                  Supplier<Optional<Product>> fallbackSupplier) {
         throw new ExerciseNotCompletedException();
@@ -117,7 +117,7 @@ public class ProductUtils {
      * @param productSupplier source of a product (must be non-empty)
      * @return existing or newly generated SKU
      */
-    // CASE 51: Optional orElseGet for lazy evaluation
+    // CASE 51
     public static String getOrGenerateSku(Supplier<Optional<Product>> productSupplier) {
         throw new ExerciseNotCompletedException();
     }
