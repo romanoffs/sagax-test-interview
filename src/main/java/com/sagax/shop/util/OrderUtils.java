@@ -26,7 +26,6 @@ public class OrderUtils {
      * @param status the expected status
      * @return predicate that matches orders with the given status
      */
-    // CASE 38: Functional Interface: Predicate implementation
     public static Predicate<Order> hasStatus(OrderStatus status) {
         throw new ExerciseNotCompletedException();
     }
@@ -38,7 +37,6 @@ public class OrderUtils {
      * @param min the minimum amount (exclusive)
      * @return predicate for orders above a minimum total
      */
-    // CASE 39: Functional Interface: Predicate with BigDecimal implementation
     public static Predicate<Order> isTotalAbove(BigDecimal min) {
         throw new ExerciseNotCompletedException();
     }
@@ -48,7 +46,6 @@ public class OrderUtils {
      *
      * @return function extracting the user email from an order
      */
-    // CASE 40: Functional Interface: Function implementation
     public static Function<Order, String> toUserEmail() {
         throw new ExerciseNotCompletedException();
     }
@@ -62,7 +59,6 @@ public class OrderUtils {
      *
      * @return comparator by creation time descending
      */
-    // CASE 41: Comparator Implementation without comparing()
     public static Comparator<Order> byCreatedAtDesc() {
         throw new ExerciseNotCompletedException();
     }
@@ -73,7 +69,6 @@ public class OrderUtils {
      *
      * @return function that groups orders by status
      */
-    // CASE 42: Stream API: groupingBy Collector
     public static Function<List<Order>, Map<OrderStatus, List<Order>>> groupOrdersByStatus() {
         throw new ExerciseNotCompletedException();
     }
@@ -85,7 +80,6 @@ public class OrderUtils {
      *
      * @return function that finds the most expensive order
      */
-    // CASE 43: Stream API: max reduction
     public static Function<List<Order>, Optional<Order>> findMostExpensiveOrder() {
         throw new ExerciseNotCompletedException();
     }
